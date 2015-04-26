@@ -15,7 +15,7 @@
 		});
 	};
 
-	function extendEvent(obj) {
+	classjs.extendEvent = function(obj) {
 		merger(obj, {
 			/**
 			 *trigger('createClassAfter',clazz1,clazzN);
@@ -144,12 +144,12 @@
 		});
 	};
 
-	extendEvent($fn);
+	classjs.extendEvent($fn);
 
 	$fn.addListener('initPrototypeAfter', function(event, clazz) {
 		var prototype = clazz.prototype;
 		if (prototype.extendEvent == true) {
-			extendEvent(prototype);
+			classjs.extendEvent(prototype);
 			delete prototype.extendEvent;
 		}
 	});
