@@ -145,7 +145,7 @@
 	};
 
 	extendEvent($fn);
-
+	//注入initPrototype并让prototype实现event
 	$fn.addListener('initPrototypeAfter', function(event, clazz) {
 		var prototype = clazz.prototype;
 		if (prototype.extendEvent == true) {
