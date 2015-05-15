@@ -8,8 +8,7 @@
 		ObjectPrototype = Object.prototype,
 		FunctionPrototype = Function.prototype,
 		ObjectHasOwnProperty = ObjectPrototype.hasOwnProperty,
-		emptyFunction = function() {},
-		__IS_CREATE_CLASS__ = '__IS_CREATE_CLASS__';
+		emptyFunction = function() {};
 
 	FunctionPrototype.__isFunction__ = true;
 	ObjectPrototype.__isObject__ = true;
@@ -113,6 +112,18 @@
 	};
 
 
+	function getClassConstructor() {
+		return function(config) {
+			if (config != classjs.__IS_CREATE_CLASS__ && this.init) {
+				var result = this.init.apply(this, arguments);
+				this.ready();
+				return result;
+			}
+		};
+	};
+
+	var ClassConstructorString=getClassConstructor().toString();
+
 	function getNameSpace(className) {
 		var parent = global,
 			ref,
@@ -123,10 +134,14 @@
 			parent[NS] = parent[NS] || {};
 			ref = parent[NS];
 			if (i < size - 1) {
-				parent = ref;
+				//创建类的构造函数
+				var fn=new Function(className+'='+ClassConstructorString);
+				fn();
+				parent = parent[NS];
 				pack.push(NS);
 			}
 		});
+
 		return {
 			parent: parent,
 			ref: ref,
@@ -136,15 +151,6 @@
 	};
 
 
-	function getClassConstructor() {
-		return function(config) {
-			if (config != __IS_CREATE_CLASS__ && this.init) {
-				var result = this.init.apply(this, arguments);
-				this.ready();
-				return result;
-			}
-		};
-	};
 
 	function setOwner(clazz, name, fn, isOverride) {
 		if (fn && fn.__isFunction__ && !fn.__owner__) {
@@ -167,9 +173,10 @@
 			superClass = classjs.getClass(clazz.extend),
 			prototype = clazz;
 
+
 		$fn.trigger('initClassBefore', clazz);
 
-		clazz = getClassConstructor();
+		clazz = NS.ref;
 
 		apply(clazz, prototype.statics);
 
@@ -188,7 +195,9 @@
 
 			clazz.prototype = superClass.prototype;
 
-			clazz.prototype = new clazz(__IS_CREATE_CLASS__);
+			//用原型链实现继承，并模拟类似DOM的继承关系
+			var fn=new Function('return new '+prototype.className+'(classjs.__IS_CREATE_CLASS__);');
+			clazz.prototype = fn();
 		}
 
 		NS.parent[NS.refNS] = clazz;
@@ -229,15 +238,50 @@
 		delete clazz.__prototype__;
 
 		if (clazz.__super__) {
-			prototype.callSuper = callSuper;
+			prototype.callSuper = function () {
+				var caller = arguments.callee.caller,
+					method,
+					arg,
+					superClass,
+					result,
+					superPrototype;
+
+				method = caller.__name__;
+				arg = caller.arguments;
+				superClass = caller.__owner__.getSuperClass();
+				superPrototype = superClass.prototype;
+
+				if (superPrototype && superPrototype[method]) {
+					result = superPrototype[method].apply(this, arg);
+				} else if (superClass[method]) {
+					result = superClass[method].apply(this, arg);
+				}
+				return result;
+			};
+
+			prototype.getSuper= function() {
+				return this.getSuperClass().prototype;
+			};
 		}
 
 
 		merger(clazz.prototype, {
+			constructor : clazz,
 			__isPrototype__: true,
 			__class__: clazz,
 			package: clazz.__package__,
 			name: clazz.__name__,
+			callPrototype: function() {
+				var caller = arguments.callee.caller,
+					method,
+					arg;
+				method = caller.__name__;
+				arg = caller.arguments;
+				return this.getPrototype()[method].apply(this, arg);
+			}
+		}, prototype);
+
+		apply(clazz.prototype, {
 			init: function(config) {
 				classjs.log();
 				this.override(config);
@@ -251,14 +295,6 @@
 				merger(this, config);
 				setThisOwner.call(this, true);
 			},
-			callPrototype: function() {
-				var caller = arguments.callee.caller,
-					method,
-					arg;
-				method = caller.__name__;
-				arg = caller.arguments;
-				return this.getPrototype()[method].apply(this, arg);
-			},
 			getClass: function() {
 				return this.__class__;
 			},
@@ -268,7 +304,7 @@
 			getPrototype: function() {
 				return this.__class__.prototype;
 			}
-		}, prototype);
+		});
 
 		$fn.trigger('initPrototypeAfter', clazz);
 
@@ -290,7 +326,7 @@
 	var classMap = {},
 		$fn = {
 			on: emptyFunction,
-				trigger: emptyFunction
+			trigger: emptyFunction
 		},
 		classjs = global.classjs = function(clazz) {
 
@@ -308,6 +344,7 @@
 
 
 	merger(classjs, {
+		__IS_CREATE_CLASS__ : '__IS_CREATE_CLASS__',
 		version: "1.0",
 		getClass: getClass,
 		merger: merger,
