@@ -22,7 +22,7 @@
 		return format;
 	};
 
-
+	//重写并实现log方法
 	classjs.log = (function() {
 
 		var index = 1;
