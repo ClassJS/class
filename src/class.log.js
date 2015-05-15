@@ -29,6 +29,7 @@
 		return function() {
 			if (!this.debug) {
 				this.log =  function(){};
+				return;
 			}
 			var callerInfo = this.log.getCallerInfo(arguments.callee.caller);
 
