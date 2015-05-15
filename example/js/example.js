@@ -1,4 +1,4 @@
-(function() {
+(function(classjs) {
 	classjs.debug = true;
 
 	classjs({
@@ -121,4 +121,4 @@
 		});
 
 	}, 1500);
-})();
+})(classjs);
