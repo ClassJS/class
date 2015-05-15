@@ -3,7 +3,9 @@
 
 	classjs({
 		className: 'ui.widget',
+		//当引入class.event.js时才能继承事件机制
 		extendEvent: true,
+		//给类增加静态属性或方法，可通用ui.widget.css访问
 		statics: {
 			css: {
 				px: 'x-ui'
