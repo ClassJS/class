@@ -143,7 +143,7 @@
 			}
 		});
 	};
-	//重写$fn的on和trigger
+	//重写并实现$fn的on和trigger
 	extendEvent($fn);
 	//注入initPrototype并让prototype实现event
 	$fn.addListener('initPrototypeAfter', function(event, clazz) {
