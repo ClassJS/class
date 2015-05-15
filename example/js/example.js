@@ -15,6 +15,7 @@
 			}
 		},
 		ready: function() {
+			//当引入class.log.js时console输出2015-05-15 16:33:18 [INFO-1] ui.widget::ready() Arguments[0]
 			classjs.log();
 		}
 	});
@@ -44,6 +45,7 @@
 		},
 		show: function() {
 			classjs.log();
+			//触发通过this.addListener('show'……的侦听
 			this.trigger('show');
 		},
 		onShowBefore: function() {
@@ -70,6 +72,7 @@
 		},
 		destroy: function() {
 			classjs.log();
+			//调用父类的destroy方法
 			this.callSuper();
 		}
 	});
@@ -83,12 +86,15 @@
 		},
 		destroy: function() {
 			classjs.log();
+			//调用原型的destroy方法
 			this.callPrototype();
 		}
 	});
 
 	setTimeout(function() {
+		//侦听win的show事件
 		win.addListener('show', function() {
+			//依次调用win对象的onShowBefore、onShow、onShowAfter方法
 			this.on('show');
 		});
 
