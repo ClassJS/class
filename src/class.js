@@ -111,7 +111,7 @@
 		mergerAndApply(true, arg.isDeep, arg.target, arg.list);
 	};
 
-
+	//默认构造函数
 	function getClassConstructor() {
 		return function(config) {
 			if (config != classjs.__IS_CREATE_CLASS__ && this.init) {
@@ -134,7 +134,7 @@
 			parent[NS] = parent[NS] || {};
 			ref = parent[NS];
 			if (i < size - 1) {
-				//创建类的构造函数
+				//创建类的构造函数，为了提高debug对象的可识别度
 				var fn=new Function(className+'='+ClassConstructorString);
 				fn();
 				parent = parent[NS];
@@ -151,7 +151,7 @@
 	};
 
 
-
+	//给function设置所有者关系，用于logger信息和this.callPrototype()、this.callSuper()
 	function setOwner(clazz, name, fn, isOverride) {
 		if (fn && fn.__isFunction__ && !fn.__owner__) {
 			fn.__owner__ = clazz;
@@ -192,7 +192,7 @@
 			clazz.__super__ = superClass;
 
 			delete prototype.extend;
-
+			//使用原型链继承，而不是copy、merger原型
 			clazz.prototype = superClass.prototype;
 
 			//用原型链实现继承，并模拟类似DOM的继承关系
@@ -284,6 +284,7 @@
 		apply(clazz.prototype, {
 			init: function(config) {
 				classjs.log();
+				//重写对象属性和方法
 				this.override(config);
 			},
 			ready: emptyFunction,
@@ -326,6 +327,7 @@
 	var classMap = {},
 		$fn = {
 			on: emptyFunction,
+			//事件触发，用于插件注入
 			trigger: emptyFunction
 		},
 		classjs = global.classjs = function(clazz) {
@@ -351,6 +353,7 @@
 		apply: apply,
 		each: each,
 		it: iterator,
+		//暴露classjs.log接口
 		log: emptyFunction,
 		$fn: $fn
 	});
