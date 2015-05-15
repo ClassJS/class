@@ -28,7 +28,7 @@
 		var index = 1;
 		return function() {
 			if (!this.debug) {
-				this.log = emptyFunction;
+				this.log =  function(){};
 			}
 			var callerInfo = this.log.getCallerInfo(arguments.callee.caller);
 
