@@ -15,7 +15,8 @@
 			}
 		},
 		ready: function() {
-			//当引入class.log.js时console输出2015-05-15 16:33:18 [INFO-1] ui.widget::ready() Arguments[0]
+			//当引入class.log.js时console会输出2015-05-15 16:33:18 [INFO-1] ui.widget::ready() Arguments[0]
+			//打包发布产品的时候可以清除classjs.log();
 			classjs.log();
 		}
 	});
