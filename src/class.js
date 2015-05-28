@@ -10,7 +10,7 @@
         ObjectHasOwnProperty = ObjectPrototype.hasOwnProperty,
         emptyFunction = function() {};
 
-    FunctionPrototype.__isFunction__ = true;
+    // FunctionPrototype.__isFunction__ = true;
     // Array.prototype.__isArray__ = true;
     // String.prototype.__isString__ = true;
     // Boolean.prototype.__isBoolean__ = true;
@@ -18,9 +18,22 @@
     // Number.prototype.__isNumber__ = true;
 
 
-    var removeOwnProperty = FunctionPrototype.removeOwnProperty = ObjectPrototype.removeOwnProperty = function() {
+    function isObject(value) {
+        return toString.call(value) === '[object Object]';
+    };
+
+    function isString(value) {
+        return typeof value === 'string';
+    };
+
+    function isFunction(value) {
+        return typeof value === 'function';
+    };
+
+
+    var removeOwnProperty = function() {
         it(this, function(key, value) {
-            if (value && value.__isFunction__) {
+            if (value && isFunction(value)) {
                 removeOwnProperty.call(value);
             }
             this[key] = null;
@@ -66,8 +79,8 @@
                 var targetItem = target[key];
                 if (isApply && targetItem) {
 
-                } else if (isDeep && copyItem && classjs.isObject(copyItem) && targetItem) {
-                    if (!classjs.isObject(targetItem)) {
+                } else if (isDeep && copyItem && isObject(copyItem) && targetItem) {
+                    if (!isObject(targetItem)) {
                         targetItem = {};
                     }
                     target[key] = mergerAndApply(isApply, isDeep, targetItem, [copyItem]);
@@ -123,7 +136,7 @@
 
     var ClassConstructorString = getClassConstructor().toString();
 
-    function getNameSpace(className) {
+    function getNameSpace(className, isClass) {
         var parent = global,
             ref,
             pack = [],
@@ -133,9 +146,11 @@
             parent[NS] = parent[NS] || {};
             ref = parent[NS];
             if (i < size - 1) {
-                //创建类的构造函数，为了提高debug对象的可识别度
-                var fn = new Function(className + '=' + ClassConstructorString);
-                fn();
+                if (isClass) {
+                    //创建类的构造函数，为了提高debug对象的可识别度
+                    var fn = new Function(className + '=' + ClassConstructorString);
+                    fn();
+                }
                 parent = parent[NS];
                 pack.push(NS);
             }
@@ -152,7 +167,7 @@
 
     //给function设置所有者关系，用于logger信息和this.callPrototype()、this.callSuper()
     function setOwner(clazz, name, fn, config) {
-        if (fn && fn.__isFunction__ && !fn.__owner__) {
+        if (fn && isFunction(fn) && !fn.__owner__) {
             fn.__owner__ = clazz;
             fn.__name__ = name;
             merger(fn, config);
@@ -167,9 +182,21 @@
         }, this);
     };
 
+
+    function addClass(clazz) {
+        classMap[clazz.__className__] = clazz;
+    };
+
+    function getClass(className) {
+        var clazz = classMap[className];
+        if (clazz && !clazz.__isSingleton__) {
+            return clazz;
+        }
+    };
+
     function initClass(clazz) {
-        var NS = getNameSpace(clazz.className),
-            superClass = classjs.getClass(clazz.extend),
+        var NS = getNameSpace(clazz.className, true),
+            superClass = getClass(clazz.extend),
             prototype = clazz;
 
 
@@ -189,10 +216,12 @@
             __prototype__: prototype
         });
 
+
+        delete prototype.extend;
+
         if (superClass) {
             clazz.__super__ = superClass;
 
-            delete prototype.extend;
             //使用原型链继承，而不是copy、merger原型
             clazz.prototype = superClass.prototype;
 
@@ -364,14 +393,6 @@
     };
 
 
-    function addClass(clazz) {
-        classMap[clazz.__className__] = clazz;
-    };
-
-    function getClass(className) {
-        return classMap[className];
-    };
-
 
     var classMap = {},
         $fn = {
@@ -418,12 +439,9 @@
         log: emptyFunction,
         $fn: $fn,
         setOwner: setOwner,
-        isObject: function(value) {
-            return toString.call(value) === '[object Object]';
-        },
-        isString: function(value) {
-            return typeof value === 'string';
-        }
+        isObject: isObject,
+        isString: isString,
+        isFunction: isFunction
     });
 
 })(this);
