@@ -115,6 +115,7 @@
 
                 var methodName = "on" + toFirstUpperCase(type),
                     scope = this,
+                    event,
                     handle;
 
                 type = methodName + "Before";

@@ -163,18 +163,19 @@
                         '}'
                     ].join('').replace(/\s\s/g, ''),
 
-                    styleElem = DOC.createElement("style"),
+                    div = DOC.createElement("div"),
 
-                    logBox = DOC.createElement("div");
+                    logBox = DOC.createElement("div"),
+                    lastChild = DOC.body.lastChild,
+                    body = DOC.body;
 
-                styleElem.innerText = styleText;
-
-                DOC.body.insertBefore(styleElem, DOC.body.lastChild);
-
+                div.innerHTML = '_<style  type=\"text/css\">' + styleText + '</style>';
+                div.removeChild(div.firstChild); //针对低版本Safari和Chrome
+                body.insertBefore(div.firstChild, lastChild);
 
                 logBox.className = "classjs-log-box";
 
-                DOC.body.insertBefore(logBox, DOC.body.lastChild);
+                body.insertBefore(logBox, lastChild);
 
                 function getInfo(info) {
                     var arg = null,

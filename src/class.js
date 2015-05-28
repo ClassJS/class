@@ -8,6 +8,7 @@
         ObjectPrototype = Object.prototype,
         FunctionPrototype = Function.prototype,
         ObjectHasOwnProperty = ObjectPrototype.hasOwnProperty,
+        toString = ObjectPrototype.toString,
         emptyFunction = function() {};
 
     // FunctionPrototype.__isFunction__ = true;
