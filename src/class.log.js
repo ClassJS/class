@@ -1,4 +1,3 @@
-
 (function(global, undefined) {
 
     var ArraySlice = Array.prototype.slice;
@@ -120,6 +119,9 @@
                     index = 0,
                     styleText = [
                         '.classjs-log-box {',
+                        '    bottom: 0px;',
+                        '    font-size: 14px;',
+                        '    font-family: Verdana, Arial;',
                         '    margin: 5px;',
                         '    text-shadow: 0px 0px 0px #000000;',
                         '    overflow-y: auto;',
@@ -165,7 +167,6 @@
 
 
                 logBox.className = "classjs-log-box";
-                logBox.style.cssText = 'position: absolute; right: 0px; bottom: 0px; height: 200px; left: 0px; font-size: 14px; font-family: Verdana, Arial;overflow-y: auto;overflow-x: hidden;';
 
                 DOC.body.insertBefore(logBox, DOC.body.lastChild);
 
