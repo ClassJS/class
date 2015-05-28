@@ -70,15 +70,9 @@
                 y: 2
             });
         },
-        onCloseBefore: function() {
-            classjs.log();
-        },
         onClose: function() {
             classjs.log();
             this.emit('close');
-        },
-        onCloseAfter: function() {
-            classjs.log();
         },
         destroy: function() {
             classjs.log();
