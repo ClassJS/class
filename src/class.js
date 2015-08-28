@@ -59,16 +59,17 @@
         }
     };
 
-    function it(array, handle, scope) {
-        if (!array || !handle) {
+    function it(map, handle, scope) {
+        if (!map || !handle) {
             return;
         }
         scope = scope || null;
-        for (var key in array) {
+        for (var key in map) {
+			var value=map[key];
             if (scope == null) {
-                scope = array[key];
+                scope = value;
             }
-            if (ObjectHasOwnProperty.call(array, key) && handle.call(scope, key, array[key]) === false) {
+            if (ObjectHasOwnProperty.call(map, key) && handle.call(scope, key, value) === false) {
                 return false;
             }
         }
@@ -397,9 +398,8 @@
 
     var classMap = {},
         $fn = {
-            emit: emptyFunction,
             //事件触发，用于插件注入
-            trigger: emptyFunction
+            emit: emptyFunction
         },
         classjs = global.classjs = function(clazz) {
 
