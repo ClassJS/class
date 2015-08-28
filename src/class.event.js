@@ -1,20 +1,12 @@
 (function(global, undefined) {
 
-    var ArraySlice = Array.prototype.slice,
-        classjs = global.classjs,
-        it = classjs.it,
+    var classjs = global.classjs,
         each = classjs.each,
         merger = classjs.merger,
         apply = classjs.apply,
         $fn = classjs.$fn,
         setOwner = classjs.setOwner,
         __NO_FUNCTION__ = '__NO_FUNCTION__';
-
-    function toFirstUpperCase(str) {
-        return str.replace(/^./g, function(match) {
-            return match.toUpperCase();
-        });
-    };
 
     function extendEvent(obj) {
         merger(obj, {
@@ -110,49 +102,6 @@
                     }
                 }, this);
 
-            },
-            trigger: function(type, data) {
-
-                var methodName = "on" + toFirstUpperCase(type),
-                    scope = this,
-                    event,
-                    handle;
-
-                type = methodName + "Before";
-
-                event = this.__createEvent__(type, data);
-
-                handle = scope[type];
-
-                if (handle && handle.call(scope, event) == false) {
-                    return false;
-                }
-
-
-
-                type = methodName;
-
-                event = this.__createEvent__(type, data);
-
-                handle = scope[type];
-
-                if (handle && handle.call(scope, event) == false) {
-                    return false;
-                }
-
-
-
-                type = methodName + "After";
-
-                event = this.__createEvent__(type, data);
-
-                handle = scope[type];
-
-
-                if (handle && handle.call(scope, event) == false) {
-                    return false;
-                }
-                return true;
             }
         });
     };

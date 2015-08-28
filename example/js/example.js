@@ -46,11 +46,9 @@
         },
         show: function() {
             classjs.log();
-            //依次调用win对象的onShowBefore、onShow、onShowAfter方法
-            this.trigger('show', {
-                x: 1,
-                y: 2
-            });
+			this.onShowBefore();
+			this.onShow();
+			this.onShowAfter();
         },
         onShowBefore: function(event) {
             classjs.log();
@@ -65,10 +63,7 @@
         },
         close: function() {
             classjs.log();
-            this.trigger('close', {
-                x: 1,
-                y: 2
-            });
+			this.onClose();
         },
         onClose: function() {
             classjs.log();
