@@ -23,7 +23,10 @@
         }
         return format;
     };
-
+    
+    //启用debug模式
+    classjs.debug = true;
+    
     //重写并实现log方法
     var data = {
             arg: true,
