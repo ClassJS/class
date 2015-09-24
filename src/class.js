@@ -147,12 +147,13 @@
             refNS = NS;
             parent[NS] = parent[NS] || {};
             ref = parent[NS];
+
+            if (isClass && i == size - 2) {
+                //创建类的构造函数，为了提高debug对象的可识别度
+                var fn = new Function(className + '=' + ClassConstructorString);
+                fn();
+            }
             if (i < size - 1) {
-                if (isClass) {
-                    //创建类的构造函数，为了提高debug对象的可识别度
-                    var fn = new Function(className + '=' + ClassConstructorString);
-                    fn();
-                }
                 parent = parent[NS];
                 pack.push(NS);
             }
